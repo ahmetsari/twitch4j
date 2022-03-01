@@ -14,6 +14,7 @@ import com.github.twitch4j.chat.enums.TMIConnectionState;
 import com.github.twitch4j.chat.events.AbstractChannelEvent;
 import com.github.twitch4j.chat.events.CommandEvent;
 import com.github.twitch4j.chat.events.IRCEventHandler;
+import com.github.twitch4j.chat.events.IRCWebsocketMessageEvent;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.chat.events.channel.ChannelNoticeEvent;
 import com.github.twitch4j.chat.events.channel.ChannelJoinFailureEvent;
@@ -329,7 +330,7 @@ public class TwitchChat implements ITwitchChat {
         IRCEventHandler ircEventHandler = new IRCEventHandler(this);
 
         // connect to irc
-        this.connect();
+//        this.connect();
 
         // queue command worker
         this.flushCommand = () -> {
@@ -564,6 +565,7 @@ public class TwitchChat implements ITwitchChat {
                         .replace("\r", "\n").split("\n"))
                         .forEach(message -> {
                             if (!message.equals("")) {
+                                eventManager.publish(new IRCWebsocketMessageEvent(message));
                                 // Handle messages
                                 log.trace("Received WebSocketMessage: " + message);
                                 // - CAP
@@ -674,7 +676,7 @@ public class TwitchChat implements ITwitchChat {
      * @param command      IRC Command
      * @param consumeToken should a token be consumed when sending this text?
      */
-    private boolean sendTextToWebSocket(String command, Boolean consumeToken) {
+    public boolean sendTextToWebSocket(String command, Boolean consumeToken) {
         // will send text only if CONNECTED or CONNECTING
         if (!connectionState.equals(TMIConnectionState.CONNECTED) && !connectionState.equals(TMIConnectionState.CONNECTING)) {
             return false;

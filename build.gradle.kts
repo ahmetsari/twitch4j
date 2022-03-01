@@ -159,16 +159,18 @@ subprojects {
 		}
 		publications {
 			create<MavenPublication>("main") {
+				groupId = "com.bites.twitch4j"
+				version = "1.5.1"
 				from(components["java"])
 				pom.default()
 			}
 		}
 	}
 
-	signing {
-		useGpgCmd()
-		sign(publishing.publications["main"])
-	}
+//	signing {
+//		useGpgCmd()
+//		sign(publishing.publications["main"])
+//	}
 
 	// Source encoding
 	tasks {
